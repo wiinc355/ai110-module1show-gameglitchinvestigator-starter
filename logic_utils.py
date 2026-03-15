@@ -18,7 +18,23 @@ def check_guess(guess, secret):
 
     outcome examples: "Win", "Too High", "Too Low"
     """
-    raise NotImplementedError("Refactor this function from app.py into logic_utils.py")
+    # FIX: Implemented this function with Copilot support after moving logic out of app.py.
+    if guess == secret:
+        return "Win", "🎉 Correct!"
+
+    try:
+        # FIX: Updated hint direction with AI pair-debugging (high -> LOWER, low -> HIGHER).
+        if guess > secret:
+            return "Too High", "📉 Go LOWER!"
+        return "Too Low", "📈 Go HIGHER!"
+    except TypeError:
+        g = str(guess)
+        s = str(secret)
+        if g == s:
+            return "Win", "🎉 Correct!"
+        if g > s:
+            return "Too High", "📉 Go LOWER!"
+        return "Too Low", "📈 Go HIGHER!"
 
 
 def update_score(current_score: int, outcome: str, attempt_number: int):

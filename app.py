@@ -34,6 +34,8 @@ def check_guess(guess, secret):
         return "Win", "🎉 Correct!"
 
     try:
+        # FIXME: Logic breaks here — hint direction is reversed for high/low outcomes.
+        # FIX: Flagged during Copilot-assisted debugging before moving corrected logic into logic_utils.py.
         if guess > secret:
             return "Too High", "📈 Go HIGHER!"
         else:
