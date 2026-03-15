@@ -25,14 +25,52 @@ It wrote the code, ran away, and now the game is unplayable.
 
 ## 📝 Document Your Experience
 
-- [ ] Describe the game's purpose.
-- [ ] Detail which bugs you found.
-- [ ] Explain what fixes you applied.
+- [x] **Describe the game's purpose.**
+   The purpose of the game is to let the player guess a secret number within a limited number of attempts, with feedback after each guess and a score that updates based on outcomes.
+- [x] **Detail which bugs you found.**
+   I found that hint direction was reversed (for example, a high guess could show a higher-style hint), and there were state/reset issues that made a new game unreliable. I also found logic/test mismatches where `check_guess` behavior did not align with expected test outcomes until refactoring was completed.
+- [x] **Explain what fixes you applied.**
+   I moved and implemented guess logic in `logic_utils.py`, corrected hint direction (high guess → go lower, low guess → go higher), and added a regression test to catch the reversed-hint bug. I also updated tests to validate the `(outcome, message)` return format and confirmed all tests pass with `pytest` (`4 passed`).
 
 ## 📸 Demo
 
-- [ ] [Insert a screenshot of your fixed, winning game here]
+- [X] [Insert a screenshot of your fixed, winning game here]
+
+### Challenge 1: Advanced Edge-Case Testing
+
+- Added edge-case tests for:
+   - Negative input (example: `-7`)
+   - Decimal input (example: `42.9`)
+   - Extremely large integer input (example: `999999999999999999999999999999`)
+   - Non-numeric input (graceful error handling)
+
+- Pytest command used:
+
+```bash
+python -m pytest -q
+```
+
+- Test result:
+
+```text
+........                                                                 [100%]
+8 passed in 0.03s
+```
+
+- Screenshot (replace with your captured terminal image):
+
+![Pytest edge-case tests passing](tests/pytest-edge-cases-passing.png)
 
 ## 🚀 Stretch Features
 
-- [ ] [If you choose to complete Challenge 4, insert a screenshot of your Enhanced Game UI here]
+- [x] Challenge 4: Enhanced Game UI completed.
+
+### Challenge 4: Enhanced Game UI
+
+- Added color-coded feedback output for guess hints (`Too High`, `Too Low`, `Win`).
+- Added emoji-based hot/cold feedback (`🔥 Hot`, `🌤️ Warm`, `🧊 Cold`, `🎯 Spot on`).
+- Added a session summary area with score metrics and a table of attempts.
+
+- Screenshot of enhanced player experience (replace with your captured image file):
+
+![Enhanced game UI screenshot](tests/enhanced-game-ui.png)

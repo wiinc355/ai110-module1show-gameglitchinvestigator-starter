@@ -66,6 +66,19 @@ def update_score(current_score: int, outcome: str, attempt_number: int):
 
     return current_score
 
+
+def get_temperature_badge(distance: int, full_range: int):
+    if distance == 0:
+        return "🎯 Spot on"
+
+    if distance <= max(1, full_range // 20):
+        return "🔥 Hot"
+
+    if distance <= max(2, full_range // 10):
+        return "🌤️ Warm"
+
+    return "🧊 Cold"
+
 st.set_page_config(page_title="Glitchy Guesser", page_icon="🎮")
 
 st.title("🎮 Game Glitch Investigator")
@@ -106,6 +119,9 @@ if "status" not in st.session_state:
 if "history" not in st.session_state:
     st.session_state.history = []
 
+if "round_log" not in st.session_state:
+    st.session_state.round_log = []
+
 st.subheader("Make a guess")
 
 st.info(
@@ -136,6 +152,7 @@ with col3:
 if new_game:
     st.session_state.attempts = 0
     st.session_state.secret = random.randint(1, 100)
+    st.session_state.round_log = []
     st.success("New game started.")
     st.rerun()
 
@@ -164,8 +181,26 @@ if submit:
 
         outcome, message = check_guess(guess_int, secret)
 
+        distance = abs(guess_int - st.session_state.secret)
+        temperature_badge = get_temperature_badge(distance, high - low)
+
+        st.session_state.round_log.append(
+            {
+                "Attempt": st.session_state.attempts,
+                "Guess": guess_int,
+                "Outcome": outcome,
+                "Hot/Cold": temperature_badge,
+            }
+        )
+
         if show_hint:
-            st.warning(message)
+            hint_text = f"{message} {temperature_badge}"
+            if outcome == "Too High":
+                st.error(hint_text)
+            elif outcome == "Too Low":
+                st.info(hint_text)
+            else:
+                st.success(hint_text)
 
         st.session_state.score = update_score(
             current_score=st.session_state.score,
@@ -188,6 +223,26 @@ if submit:
                     f"The secret was {st.session_state.secret}. "
                     f"Score: {st.session_state.score}"
                 )
+
+st.subheader("📊 Session Summary")
+
+summary_col1, summary_col2, summary_col3 = st.columns(3)
+with summary_col1:
+    st.metric("Score", st.session_state.score)
+with summary_col2:
+    st.metric("Attempts Used", max(st.session_state.attempts - 1, 0))
+with summary_col3:
+    st.metric("Attempts Left", max(attempt_limit - st.session_state.attempts, 0))
+
+if st.session_state.round_log:
+    header = "| Attempt | Guess | Outcome | Hot/Cold |\n|---:|---:|---|---|"
+    rows = [
+        f"| {row['Attempt']} | {row['Guess']} | {row['Outcome']} | {row['Hot/Cold']} |"
+        for row in st.session_state.round_log
+    ]
+    st.markdown("\n".join([header] + rows))
+else:
+    st.caption("No guesses yet. Submit a guess to see your session summary.")
 
 st.divider()
 st.caption("Built by an AI that claims this code is production-ready.")
